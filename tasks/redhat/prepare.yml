@@ -5,13 +5,14 @@
     name:
       - yum-utils
       - libselinux-python
+      - policycoreutils-python
 
 - name: ensure Elastic repository is present
   yum_repository:
-    name: "elastic-{{ filebeat.version.split('.')[:1] | join('.') }}.x"
-    description: "Elastic repository for version {{ filebeat.version.split('.')[:1] | join('.') }}.x"
-    file: "elastic-{{ filebeat.version.split('.')[:1] | join('.') }}.x"
-    baseurl: "https://artifacts.elastic.co/packages/{{ filebeat.version.split('.')[:1] | join('.') }}.x/yum"
+    name: "elastic-{{ kibana.version.split('.')[:1] | join('.') }}.x"
+    description: "Elastic repository for version {{ kibana.version.split('.')[:1] | join('.') }}.x"
+    file: "elastic-{{ kibana.version.split('.')[:1] | join('.') }}.x"
+    baseurl: "https://artifacts.elastic.co/packages/{{ kibana.version.split('.')[:1] | join('.') }}.x/yum"
     gpgkey: "http://packages.elastic.co/GPG-KEY-elasticsearch"
     gpgcheck: true
     sslverify: true
@@ -20,4 +21,4 @@
 - name: ensure yum-plugin-versionlock is installed
   package:
     name: yum-plugin-versionlock
-  when: filebeat.pin_version
+  when: kibana.pin_version
