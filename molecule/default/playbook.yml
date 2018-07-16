@@ -1,0 +1,14 @@
+---
+
+- name: Converge
+  hosts: all
+  roles:
+    - role: kibana
+      kibana:
+        config:
+          server:
+            port: 5601
+            host: "0.0.0.0"
+          elasticsearch:
+            url: "http://127.0.0.1:9200"
+            requestTimeout: 60000

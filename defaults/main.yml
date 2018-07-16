@@ -1,0 +1,23 @@
+---
+
+kibana:
+
+  # Version of the Kibana service
+  version: "6.3.1"
+
+  # Lock/hold Kibana version
+  pin_version: true
+
+  user: kibana
+  group: kibana
+
+  log_dir: /var/log/kibana
+
+  config:
+    server:
+      port: 5601
+    logging:
+      dest: /var/log/kibana/kibana.log
+      json: false
+    elasticsearch:
+      url: "http://localhost:9200"

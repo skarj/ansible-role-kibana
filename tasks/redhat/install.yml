@@ -1,0 +1,55 @@
+---
+
+- name: get information about installed kibana package
+  yum:
+    list: kibana
+  check_mode: false
+  register: yum_list
+
+- name: get version of installed kibana package
+  set_fact:
+    installed_package_version: "{{ yum_list.results | selectattr('yumstate','equalto','installed') | map(attribute='version') | first }}"
+  check_mode: false
+  when: yum_list.results | selectattr('yumstate','equalto','installed') | list | length > 0
+
+- name: get information about version locks
+  command: yum versionlock list
+  changed_when: false
+  register: yum_lock
+  args:
+    warn: false
+  check_mode: false
+  when: kibana.pin_version
+
+- name: show kibana version
+  debug:
+    msg: "{% if installed_package_version is defined %}Current: {{ installed_package_version }} {% endif %}Install: {{ kibana.version }}"
+
+- name: remove version lock for kibana
+  command: yum versionlock delete *kibana*
+  args:
+    warn: false
+  when:
+    - "'kibana' in yum_lock.stdout"
+    - kibana.pin_version
+    - installed_package_version is defined
+    - installed_package_version is version(kibana.version, '<>')
+  notify: kibana lock version
+
+- name: install kibana
+  yum:
+    name: kibana-{{ kibana.version }}
+    update_cache: true
+    allow_downgrade: true
+  notify:
+    - kibana restart
+    - kibana lock version
+
+- name: lock kibana version
+  debug:
+    msg: "Pin kibana version"
+  changed_when: true
+  when:
+    - kibana.pin_version
+    - "not 'kibana' in yum_lock.stdout"
+  notify: kibana lock version

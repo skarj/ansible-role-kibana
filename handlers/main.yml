@@ -1,0 +1,25 @@
+---
+
+- name: kibana restart
+  service:
+    name: kibana
+    state: restarted
+
+- name: kibana status
+  wait_for:
+    host: 127.0.0.1
+    port: "{{ kibana.config.server.port }}"
+    delay: 5
+    connect_timeout: 1
+
+- name: kibana hold version
+  dpkg_selections:
+    name: kibana
+    selection: hold
+  when: kibana.pin_version
+
+- name: kibana lock version
+  command: yum versionlock add kibana-{{ kibana.version }}
+  args:
+    warn: false
+  when: kibana.pin_version

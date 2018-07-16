@@ -1,0 +1,22 @@
+---
+
+- name: ensure kibana directories are exists
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ kibana.user }}"
+    group: "{{ kibana.group }}"
+  with_items:
+    - "{{ kibana.log_dir }}"
+
+- name: deliver kibana configuration
+  copy:
+    content: "{{ kibana.config | to_nice_yaml }}"
+    dest: "/etc/kibana/kibana.yml"
+    owner: root
+    group: root
+    mode: 0644
+    backup: true
+  notify:
+    - kibana restart
+    - kibana status

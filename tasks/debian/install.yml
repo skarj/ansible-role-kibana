@@ -1,0 +1,57 @@
+---
+
+- name: get information about installed kibana package
+  shell: dpkg -s kibana | grep "Version:"
+  changed_when: false
+  failed_when: false
+  register: dpkg_info
+  args:
+    warn: false
+  check_mode: false
+
+- name: get version of installed kibana package
+  set_fact:
+    installed_package_version: "{{ dpkg_info.stdout.split(' ')[1] }}"
+  check_mode: false
+  when:
+    - dpkg_info is defined
+    - dpkg_info.stdout_lines | list | length > 0
+
+- name: show kibana version
+  debug:
+    msg: "{% if installed_package_version is defined %}Current: {{ installed_package_version }} {% endif %}Install: {{ kibana.version }}"
+
+- name: get information about version locks
+  command: dpkg --get-selections kibana
+  changed_when: false
+  register: dpkg_hold
+  args:
+    warn: false
+  check_mode: false
+  when: kibana.pin_version
+
+- name: remove version lock for kibana
+  dpkg_selections:
+    name: kibana
+    selection: install
+  when:
+    - kibana.pin_version
+    - "'hold' in dpkg_hold.stdout"
+    - installed_package_version is defined
+    - installed_package_version is version(kibana.version, '<>')
+  notify: kibana hold version
+
+- name: install kibana
+  package:
+    name: "kibana={{ kibana.version }}*"
+    update_cache: true
+  notify: kibana hold version
+
+- name: pin kibana version
+  debug:
+    msg: "Pin kibana version"
+  changed_when: true
+  when:
+    - kibana.pin_version
+    - "not 'hold' in dpkg_hold.stdout"
+  notify: kibana hold version

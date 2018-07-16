@@ -1,0 +1,14 @@
+---
+
+- name: ensure kibana service started and enabled
+  service:
+    name: kibana
+    state: started
+    enabled: true
+
+- name: restart filebeat service
+  debug:
+    msg: "restart filebeat"
+  changed_when: true
+  when: force_restart | default('no') | bool
+  notify: kibana restart
