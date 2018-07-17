@@ -1,6 +1,6 @@
 Kibana role
 =========
-[![Build Status](https://api.travis-ci.org/skarj/ansible-role-filebeat.svg?branch=master)](https://travis-ci.org/skarj/ansible-role-kibana)
+[![Build Status](https://api.travis-ci.org/skarj/ansible-role-kibana.svg?branch=master)](https://travis-ci.org/skarj/ansible-role-kibana)
 
 Ansible role for [kibana](https://www.elastic.co/products/kibana) 6.x installation.
 Versions lower than 6 are not supported by this role.
