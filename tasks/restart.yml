@@ -6,9 +6,11 @@
     state: started
     enabled: true
 
-- name: restart filebeat service
+- name: restart kibana service
   debug:
-    msg: "restart filebeat"
+    msg: "restart kibana"
   changed_when: true
   when: force_restart | default('no') | bool
-  notify: kibana restart
+  notify:
+    - kibana restart
+    - kibana status
