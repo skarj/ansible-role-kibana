@@ -33,7 +33,7 @@ An example of how to use this role:
 
         - hosts: all
           roles:
-            - role: kibana
+            - role: ansible-role-kibana
               kibana:
                 options:
                   server.port: 5601
