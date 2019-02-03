@@ -3,7 +3,7 @@
 kibana:
 
   # Version of the Kibana service
-  version: "6.5.2"
+  version: "6.6.0"
 
   # Lock/hold Kibana version
   pin_version: true
